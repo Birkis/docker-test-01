@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 from crewai.main import run as crew_run
+import threading
+import uuid
+from queue import Queue
 
 app = Flask(__name__)
 
@@ -9,6 +12,19 @@ mock_data = [
     {"id": 2, "name": "Item 2", "value": 200},
     {"id": 3, "name": "Item 3", "value": 300}
 ]
+
+# Store for background jobs
+job_results = {}
+
+def process_crew_job(job_id, age, interests):
+    try:
+        result = crew_run(inputs={
+            "age": age,
+            "interests": interests
+        })
+        job_results[job_id] = {"status": "completed", "result": result}
+    except Exception as e:
+        job_results[job_id] = {"status": "failed", "error": str(e)}
 
 @app.route('/')
 def hello_world():
@@ -42,20 +58,35 @@ def kickoff_crew():
                 "error": "Missing required fields. Please provide 'age' and 'interests'"
             }), 400
 
-        # Run the crew with the provided inputs
-        result = crew_run(inputs={
-            "age": data['age'],
-            "interests": data['interests']
-        })
+        # Generate a unique job ID
+        job_id = str(uuid.uuid4())
+        
+        # Initialize job status
+        job_results[job_id] = {"status": "processing"}
+        
+        # Start background thread
+        thread = threading.Thread(
+            target=process_crew_job,
+            args=(job_id, data['age'], data['interests'])
+        )
+        thread.start()
         
         return jsonify({
             "success": True,
-            "result": result
+            "job_id": job_id,
+            "message": "Job started successfully"
         })
     except Exception as e:
         return jsonify({
             "error": f"An error occurred: {str(e)}"
         }), 500
+
+@app.route('/api/crew/status/<job_id>', methods=['GET'])
+def get_job_status(job_id):
+    if job_id not in job_results:
+        return jsonify({"error": "Job not found"}), 404
+    
+    return jsonify(job_results[job_id])
 
 if __name__ == '__main__':
     app.run(debug=True)
