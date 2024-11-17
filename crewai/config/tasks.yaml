@@ -1,0 +1,17 @@
+research_task:
+  description: >
+    Research and generate creative birthday party theme ideas for a {age} year old who likes {interests}.
+    Consider current trends, age-appropriate activities, and unique elements that would make the party memorable.
+  expected_output: >
+    A detailed list of 5 unique birthday party theme ideas, each including a brief description of why
+    it would be perfect for the specified age and interests.
+  agent: researcher
+
+content_generation_task:
+  description: >
+    Based on the research provided, create detailed party plans for the top 3 theme ideas. Include
+    specific recommendations for decorations, activities, food, music, and timeline.
+  expected_output: >
+    Three comprehensive party plans with detailed breakdowns of decorations, activities, food suggestions,
+    timeline, and estimated costs. Each plan should be practical and executable.
+  agent: content_generator

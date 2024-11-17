@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from crewai.main import run as crew_run
 
 app = Flask(__name__)
 
@@ -31,6 +32,30 @@ def add_data():
     
     mock_data.append(new_item)
     return jsonify(new_item), 201
+
+@app.route('/api/crew/kickoff', methods=['POST'])
+def kickoff_crew():
+    try:
+        data = request.get_json()
+        if not data or 'age' not in data or 'interests' not in data:
+            return jsonify({
+                "error": "Missing required fields. Please provide 'age' and 'interests'"
+            }), 400
+
+        # Run the crew with the provided inputs
+        result = crew_run(inputs={
+            "age": data['age'],
+            "interests": data['interests']
+        })
+        
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+    except Exception as e:
+        return jsonify({
+            "error": f"An error occurred: {str(e)}"
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
