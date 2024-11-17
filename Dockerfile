@@ -5,14 +5,6 @@ FROM python:3.12
 # Run in unbuffered mode
 ENV PYTHONUNBUFFERED=1 
 
-# Add build dependencies before pip install
-RUN apk add --no-cache \
-    gcc \
-    musl-dev \
-    python3-dev \
-    rust \
-    cargo
-
 # Create and change to the app directory.
 WORKDIR /app
 
