@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import sys
-from crew import BirthdayPartyPlanningCrew
+from .crew import BirthdayPartyPlanningCrew
 
 def run(inputs=None):
     """
     Run the crew.
     """
     if inputs is None:
-        inputs = {"age": "10", "interests": "dinosaurs and science"}
+        inputs = {"company": "Bunnies AI", "age": "10", "interests": "dinosaurs and science"}
     result = BirthdayPartyPlanningCrew().crew().kickoff(inputs=inputs)
     return result
 
