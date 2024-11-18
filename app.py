@@ -4,12 +4,19 @@ import os
 
 app = Flask(__name__)
 
+# Disable strict slashes to handle routes with or without trailing slashes
+app.url_map.strict_slashes = False
+
 # Mock data - we'll store it in memory for this example
 mock_data = [
     {"id": 1, "name": "Item 1", "value": 100},
     {"id": 2, "name": "Item 2", "value": 200},
     {"id": 3, "name": "Item 3", "value": 300}
 ]
+# Log incoming requests
+@app.before_request
+def log_request_info():
+    print(f"Request method: {request.method}, URL: {request.url}")
 
 @app.route('/')
 def hello_world():
