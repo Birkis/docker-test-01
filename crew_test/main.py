@@ -11,5 +11,4 @@ def run(inputs=None):
     result = BirthdayPartyPlanningCrew().crew().kickoff(inputs=inputs)
     return result
 
-if __name__ == "__main__":
-    run()
+
